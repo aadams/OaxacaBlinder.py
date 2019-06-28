@@ -53,7 +53,7 @@ This function returns values, all floats, of the known effects and then the diff
 
 If plot, which can be set to True or False, is set to True, a plot of the graphs will be returned with the default settings. round_val takes either integers or variables that can be casted to integers and rounds the values of the effects to avoid floating point errors. This can be turned off by saying round_val = False.
 
-If both are selected as True, the two_fold will be calculated first, then three_fold. Fitting is required to do any of the other commands.
+If both are selected as True, the two_fold will be calculated first, then three_fold. Fitting is required to do any of the other commands. Both values default to False.
 
 
 ## plot
@@ -81,9 +81,8 @@ If you wish to just use default settings, feel free to leave the values blank.
 This function calculates the variance of the three_fold decomposition
 
 ```
-characteristic variance, coefficient variance = model.var(round_val)
+characteristic variance, coefficient variance = model.var()
 ```
-This takes a rounding value, similar to fit, which can be stopped by round_val = False
 
 ## cotton_model
 
