@@ -67,12 +67,12 @@ model.plot(plt_type, fig_size, xlabel, ylabel, color1, color2, color3, color4)
 The plot, while allowing for custom settings, does not need them. The following chart will depict what is needed for these values.
 
 
-Setting| Description | Variable Type | Required
+Setting| Description | Variable Type | Required |
 ---| --- | --- |
-plt_type| chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3
-fig_size | chooses size of plot | tuple of integers | defaults to [6,10]
-xlabel/ylabel| chooses the labels | string | defaults to the type of plot
-color(1,2,3,4) | chooses colors of the plot | string | defaults to a cool pallet
+plt_type| chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3 |
+fig_size | chooses size of plot | tuple of integers | defaults to [6,10] |
+xlabel/ylabel| chooses the labels | string | defaults to the type of plot |
+color(1,2,3,4) | chooses colors of the plot | string | defaults to a cool colored pallet |
 
 If you wish to just use default settings, feel free to leave the values blank. 
 
