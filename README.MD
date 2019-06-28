@@ -34,7 +34,7 @@ The Oaxaca object is called when you use the code below.
 ```
 model = Oaxaca(data, by, endo)
 ```
-data is required to be either a Numpy array or a Pandas DataFrame. The by value shows which column to bifurcate the date, and the endo value shows what value you wish to explain.
+data is required to be either a Numpy array or a Pandas DataFrame. The by value shows which column to bifurcate the date, and the endo value shows which column you wish to explain.
 These are the needed data types depending on what type your data is in. 
 
 data type| Numpy Array | Pandas DataFrame |
