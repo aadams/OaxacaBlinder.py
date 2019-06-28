@@ -35,7 +35,7 @@ data is required to be either a Numpy array or a Pandas DataFrame. The by value 
 
 These are the needed data types depending on what type your data is in. 
 
-data type| Numpy Array | Pandas DataFrame |
+data type | Numpy Array | Pandas DataFrame |
 ---| --- | --- |
 by type| integer | string |
 endo type| integer | string |
@@ -68,10 +68,10 @@ The plot, while allowing for custom settings, does not need them. The following 
 
 
 Setting| Description | Variable Type | Required |
----| --- | --- |
-plt_type| chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3 |
+---| --- | --- | --- |
+plt_type | chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3 |
 fig_size | chooses size of plot | tuple of integers | defaults to [6,10] |
-xlabel/ylabel| chooses the labels | string | defaults to the type of plot |
+xlabel/ylabel | chooses the labels | string | defaults to the type of plot |
 color(1,2,3,4) | chooses colors of the plot | string | defaults to a cool colored pallet |
 
 If you wish to just use default settings, feel free to leave the values blank. 
@@ -109,5 +109,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thank you to Dr. David Slusky for the idea behind the project.
+* Thank you to Dr. David [Slusky](http://slusky.ku.edu/) for the idea behind the project.
 
