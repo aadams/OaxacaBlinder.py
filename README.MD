@@ -35,7 +35,7 @@ data is required to be either a Numpy array or a Pandas DataFrame. The by value 
 
 These are the needed data types depending on what type your data is in. 
 
-data type| Numpy Array | Pandas DataFrame |
+data type | Numpy Array | Pandas DataFrame |
 ---| --- | --- |
 by type| integer | string |
 endo type| integer | string |
@@ -53,7 +53,7 @@ This function returns values, all floats, of the known effects and then the diff
 
 If plot, which can be set to True or False, is set to True, a plot of the graphs will be returned with the default settings. round_val takes either integers or variables that can be casted to integers and rounds the values of the effects to avoid floating point errors. This can be turned off by saying round_val = False.
 
-If both are selected as True, the two_fold will be calculated first, then three_fold. Fitting is required to do any of the other commands.
+If both are selected as True, the two_fold will be calculated first, then three_fold. Fitting is required to do any of the other commands. Both values default to False.
 
 
 ## plot
@@ -67,12 +67,12 @@ model.plot(plt_type, fig_size, xlabel, ylabel, color1, color2, color3, color4)
 The plot, while allowing for custom settings, does not need them. The following chart will depict what is needed for these values.
 
 
-Setting| Description | Variable Type | Required
----| --- | --- |
-plt_type| chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3
-fig_size | chooses size of plot | tuple of integers | defaults to [6,10]
-xlabel/ylabel| chooses the labels | string | defaults to the type of plot
-color(1,2,3,4) | chooses colors of the plot | string | defaults to a cool pallet
+Setting| Description | Variable Type | Required |
+---| --- | --- | --- |
+plt_type | chooses between two_fold, three_fold, and cotton_model | integer | defaults to 3 |
+fig_size | chooses size of plot | tuple of integers | defaults to [6,10] |
+xlabel/ylabel | chooses the labels | string | defaults to the type of plot |
+color(1,2,3,4) | chooses colors of the plot | string | defaults to a cool colored pallet |
 
 If you wish to just use default settings, feel free to leave the values blank. 
 
@@ -81,9 +81,8 @@ If you wish to just use default settings, feel free to leave the values blank.
 This function calculates the variance of the three_fold decomposition
 
 ```
-characteristic variance, coefficient variance = model.var(round_val)
+characteristic variance, coefficient variance = model.var()
 ```
-This takes a rounding value, similar to fit, which can be stopped by round_val = False
 
 ## cotton_model
 
@@ -97,7 +96,7 @@ This takes plot and round_val just like the other function.
 
 ## TODO
 
-There is a paper about using non-linear models for Oaxaca, and variance estimation for two_fold models.
+There is a paper about using non-linear models for Oaxaca and variance estimation for two_fold models.
 
 ## Authors
 
@@ -109,5 +108,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thank you to Dr. David Slusky for the idea behind the project.
+* Thank you to Dr. David [Slusky](http://slusky.ku.edu/) for the idea behind the project.
 
