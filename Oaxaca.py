@@ -226,12 +226,18 @@ class Oaxaca:
         return self.unexplained, self.explained, self.two_gap
 
 
-    def var(self):
-
+    def var(self, round_val = 5):
+        #Calculates the variance of the model
         #This is an attempt to check to see if the models have not been fit
         if len(self.f_model.params) == 0 and len(self.s_model.params) == 0:
             raise ValueError("Please fit the model before you use this command")
         #I will use this value several times, so I will store it.
+        if round_val != False:
+            try:
+                round_val = int(round_val)
+            except ValueError:
+                raise ValueError("Your round value must either by an int or be able to be casted into one.")
+        
         f_x_mean = self.f_x.mean()
         s_x_mean = self.s_x.mean()
 
@@ -247,25 +253,43 @@ class Oaxaca:
         f_2 = self.f_model.params @ (f_cov + s_cov) @ self.f_model.params
 
         s_1 = s_x_mean @ (self.f_model.cov_params() + self.s_model.cov_params()) @ s_x_mean
-        s_2 = (self.f_model.params - self.s_model.params) @ s_cov @ (self.f_model.params - self.s_model.params)      
+        s_2 = (self.f_model.params - self.s_model.params) @ s_cov @ (self.f_model.params - self.s_model.params)   
         
-        print("Characteristic Effect Variance: {}".format(f_1 + f_2))
-        print("Coefficient Effect Variance: {}".format(s_1 + s_2))
-        return (f_1 + f_2), (s_1 + s_2)
+        f_val = f_1 + f_2
+        s_val = s_1 + s_2
+
+        if round_val != False:
+            f_val = round(f_val, round_val)
+            s_val = round(s_val, round_val)
+
+        
+        print("Characteristic Effect Variance: {}".format(f_val))
+        print("Coefficient Effect Variance: {}".format(s_val))
+        return (f_val), (s_val)
 
 
-    def cotton_model(self, plot = True):
+    def cotton_model(self, plot = True, round_val = 5):
         #This adjusts for over representation
 
         #This checks to see if the model has been fitted yet.
         if len(self.f_model.params) == 0 and len(self.s_model.params) == 0:
             raise ValueError("Please fit the model before using it")
         
+        if round_val != False:
+            try:
+                round_val = int(round_val)
+            except ValueError:
+                raise ValueError("Your round value must either by an int or be able to be casted into one.")
+
         self.cotton_fix_model = (len(self.f_x) / (len(self.f_x) + len(self.s_x))) * self.f_model.params + ((len(self.s_x) / (len(self.f_x) + len(self.s_x))) * self.s_model.params)
 
         self.cotton_unexplained = (self.f_x.mean() @ (self.f_model.params - self.cotton_fix_model)) + (self.s_x.mean() @ (self.cotton_fix_model - self.s_model.params))
 
         self.cotton_explained = (self.f_x.mean() - self.s_x.mean()) @ self.cotton_fix_model
+        
+        if round_val != False:
+            self.cotton_unexplained = round(self.cotton_unexplained, round_val)
+            self.cotton_explained = round(self.cotton_explained, round_val)
 
         print('Unexplained Effect with Cotton Model: {}'.format(self.cotton_unexplained))
         print('Explained Effect with Cotton Model: {}'.format(self.cotton_explained))
@@ -357,8 +381,8 @@ class Oaxaca:
             plt.legend()
 
 
-    def fit(self, two_fold, three_fold , plot = False):
+    def fit(self, two_fold, three_fold , plot = False, round_val = 5):
         if two_fold == True:
-            self.two_fold(plot = plot)
+            self.two_fold(plot = plot, round_val = 5)
         if three_fold == True:
-            self.three_fold(plot = plot)
+            self.three_fold(plot = plot, round_val = 5)
