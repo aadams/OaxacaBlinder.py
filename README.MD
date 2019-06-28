@@ -3,17 +3,16 @@
 This package attempts to port the functionality of the oaxaca command in STATA to Python. The Oaxaca-Blinder, or Blinder-Oaxaca as some call it,
 decomposition attempts to explain gaps in means of groups. It uses the linear models of two given regression equations to show what is explained by regression coefficients and known data and
 what is unexplained using the current data. There are two types of Oaxaca-Blinder decompositions, the two-fold and the three-fold,
-both of which can and are used in Economics Literature to discuss differences in groups. If you would like to learn more about the specifics, read
-the journal article by Dr. Ben Jann in the papers folder of the repo.
+both of which can and are used in Economics Literature to discuss differences in groups. If you would like to learn more about the specifics, read the journal article by Dr. Ben Jann in the papers folder of the repo.
  
 ### Prerequisites
 
-This package requires NumPy, Pandas, and StatsModels. If you intend to use the plotting feature, you also need Matplotlib
+This package requires NumPy, Pandas, and StatsModels. If you intend to use the plotting feature, you also need Matplotlib.
 
 
 ### Installing
 
-To install the package, simply download the Oaxaca.py file, place it in the working directory, and call from Oaxaca import Oaxaca
+To install the package, simply download the Oaxaca.py file, place it in the working directory, and call from Oaxaca import Oaxaca.
 
 ```
 from Oaxaca import Oaxaca
@@ -22,11 +21,11 @@ from Oaxaca import Oaxaca
 
 ## Usage
 
-This package has four current commands with the intend to add more later
+This package has four current commands with the intend to add more later.
 
-The current three_fold, two_fold, and plot
+The current are three_fold, two_fold, and plot.
 
-The anticipated are var, to calculate variance, cotton_fix, to adjust for differences in group sizes
+The anticipated are var, to calculate variance, cotton_fix, to adjust for differences in group sizes.
 
 ### The Oaxaca object
 
@@ -72,13 +71,13 @@ This returns three values, all floats: the unexplained effect, the explained eff
 
 ## plot
 
-This creates a customizable plot of the effects
+This creates a customizable plot of the effects.
 
 ```
 model.plot(plt_type, fig_size, xlabel, ylabel, color1, color2, color3, color4)
 ```
 
-If you wish to just use default settings, feel free to leave the values blank. The default plot is the three_fold decomposition, change it to two_fold by saying plt_type = 2
+If you wish to just use default settings, feel free to leave the values blank. The default plot is the three_fold decomposition, change it to two_fold by saying plt_type = 2.
 
 ## TODO
 
@@ -90,9 +89,9 @@ There is more error checking, and some more features, mainly variance/t-tests, t
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 
-* Thank you to Dr. David Slusky for the idea behind the project
+* Thank you to Dr. David Slusky for the idea behind the project.
 
