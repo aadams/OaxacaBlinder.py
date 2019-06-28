@@ -1,6 +1,7 @@
 import pandas as pd 
 import numpy as np 
 import statsmodels.api as sm
+import matplotlib.pyplot as plt
 class Oaxaca:
 
     def __init__(self, data, by, endo, val_type = 1):
@@ -12,6 +13,8 @@ class Oaxaca:
         self.f_df = ""
         self.s_df = ""
         self.endo = endo
+        self.two_gap = 0
+        self.three_gap = 0
 
         self.f_mean = 0
         self.s_mean = 0
@@ -131,19 +134,7 @@ class Oaxaca:
         self.f_y, self.s_y = self.s_y, self.f_y
         self.f_mean, self.s_mean = self.s_mean, self.f_mean
         
-
-    def fit_val(self):
-        if self.val_type == 3:
-            self.fit_three()
-        
-        if self.val_type == 2:
-            self.fit_two()
-
-        if self.val_type == 1:
-            self.fit_two()
-            self.fit_three()
-
-    def fit_three(self):
+    def three_fold(self, plot = False):
         self.f_mean = self.f_y.mean()
         self.s_mean = self.s_y.mean()
         
@@ -163,17 +154,22 @@ class Oaxaca:
         #Interaction Effect
         self.int_eff = (self.f_x.mean() - self.s_x.mean()) @ (self.f_model.params - self.s_model.params)
         
-        print("\n")
+        self.three_gap = self.f_mean - self.s_mean
+
         print("Characteristic Effect: {}".format(self.char_eff))
         print("Coefficent Effect: {}".format(self.coef_eff))
         print("Interaction Effect: {}".format(self.int_eff))
+        print("Gap: {}".format(self.three_gap))
+        
+        if plot == True:
+            self.plot(plt_type=3)
 
-        return self.char_eff, self.coef_eff, self.int_eff
+        return self.char_eff, self.coef_eff, self.int_eff, self.three_gap
 
-    def fit_two(self):
+    def two_fold(self, plot = False):
         self.f_mean = self.f_y.mean()
         self.s_mean = self.s_y.mean()
-
+        
         #The wrong first is first
         if self.f_mean - self.s_mean < 0:
             self.fix()
@@ -187,9 +183,15 @@ class Oaxaca:
 
         self.explained = (self.f_x.mean() - self.s_x.mean()) @ self.t_params
         
-        print("\n")
+        self.two_gap = self.f_mean - self.s_mean
+
         print('Unexplained Effect: {}'.format(self.unexplained))
         print('Explained Effect: {}'.format(self.explained))
+        print('Gap: {}'.format(self.two_gap))
+        if plot == True:
+            self.plot(plt_type = 2)
+
+        return self.unexplained, self.explained, self.two_gap
 
     def var(self):
         #TODO
@@ -201,3 +203,42 @@ class Oaxaca:
         #TODO
         return ''
 
+    def plot(self, plt_type = 3, fig_size = (6,10), xlabel = 'Effect', ylabel = 'Values', color1 = 'seagreen', color2 = 'darkturquoise', color3 = 'steelblue', color4 = 'navy'):
+        #the plot types must either be able to made into an int or be an int
+        try:
+            plt_type = int(plt_type)
+        except ValueError:
+            raise ValueError('The plot type must be an integer.')
+
+        #all the colors and labels must be strings
+        if any(map((lambda value: type(value) != str), (xlabel, ylabel, color1, color2, color3, color4))):
+            raise ValueError('All labels and colors must be strings.')
+        
+        #this is the three_fold plot
+        if plt_type == 3:
+            fig, ax = plt.subplots(figsize = fig_size)
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.bar(x= 0, height = self.char_eff, width = .25, label = 'Character Effect', color = color1)
+            plt.bar(x=0, height = self.coef_eff, bottom= self.char_eff, width = .25, label = 'Coefficent Effect', color = color2)
+            plt.bar(x=0, height = -self.int_eff, width = .25, label = 'Interaction Effect', color = color3)
+            plt.bar(x = .25, height = self.three_gap, width = .25, label = 'Total Gap', color = color4)
+            plt.ylim(top = self.three_gap + .15)
+            plt.xlim([-.2,.5])
+            plt.axhline(y=0, color = 'k', linestyle = '--')
+            ax.grid(zorder=0)
+            plt.legend()
+
+        #this is a two_fold plot
+        if plt_type == 2:
+            fig, ax = plt.subplots(figsize = fig_size)
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.bar(x= 0, height = self.unexplained, width = .25, label = 'Explained', color = color1)
+            plt.bar(x=0, height = self.explained, bottom= self.unexplained, width = .25, label = 'Unexplained', color = color2)
+            plt.bar(x = .25, height = self.two_gap, width = .25, label = 'Total Gap', color = color3)
+            plt.ylim(top = self.two_gap + .15)
+            plt.xlim([-.2,.5])
+            plt.axhline(y=0, color = 'k', linestyle = '--')
+            ax.grid(zorder=0)
+            plt.legend()
