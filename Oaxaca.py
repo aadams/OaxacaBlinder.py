@@ -4,11 +4,10 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 class Oaxaca:
 
-    def __init__(self, data, by, endo, val_type = 1):
+    def __init__(self, data, by, endo):
         
         self.data = data
         self.by = by
-        self.val_type = val_type
         self.df_type = ""
         self.f_df = ""
         self.s_df = ""
@@ -64,11 +63,6 @@ class Oaxaca:
                 raise ValueError('The "endo" variable must be a int')
 
             self.df_type = 'np'
-
-        self.val_type = val_type
-        
-        if type(self.val_type) != int:
-            raise ValueError('The type must be an integer')
 
         #Split the Dataframe by the 'By' value
         if self.df_type == 'np':
@@ -203,16 +197,35 @@ class Oaxaca:
         #TODO
         return ''
 
-    def plot(self, plt_type = 3, fig_size = (6,10), xlabel = 'Effect', ylabel = 'Values', color1 = 'seagreen', color2 = 'darkturquoise', color3 = 'steelblue', color4 = 'navy'):
+    def plot(self, plt_type = 3, fig_size = (6,10), xlabel = '', ylabel = 'Oaxaca Values', color1 = 'seagreen', color2 = 'darkturquoise', color3 = 'steelblue', color4 = 'navy'):
         #the plot types must either be able to made into an int or be an int
         try:
             plt_type = int(plt_type)
         except ValueError:
             raise ValueError('The plot type must be an integer.')
 
+        #we only have two types of plots, 3 or 2, so it must be one of the two
+        if plt_type != 3 and plt_type != 2:
+            raise ValueError("The plot types must be two or three")
+
         #all the colors and labels must be strings
         if any(map((lambda value: type(value) != str), (xlabel, ylabel, color1, color2, color3, color4))):
             raise ValueError('All labels and colors must be strings.')
+        
+        #This sets the xlabel if default
+        if xlabel == '':
+            if plt_type == 3:
+                xlabel = 'Three-Fold Oaxaca Plot'
+            elif plt_type == 2:
+                xlabel = 'Two-Fold Oaxaca Plot'
+
+        if plt_type == 2:
+            if self.explained == 0 and self.unexplained == 0:
+                raise ValueError("Please fit the values before attempting to plot")
+                
+        if plt_type == 3:
+            if self.char_eff == 0 and self.coef_eff == 0:
+                raise ValueError("Please fit the values before attempting to plot")
         
         #this is the three_fold plot
         if plt_type == 3:
