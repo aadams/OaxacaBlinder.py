@@ -97,7 +97,7 @@ This takes plot and round_val just like the other function.
 
 ## TODO
 
-There is a paper about using non-linear models for Oaxaca, and variance estimation for two_fold models.
+There is a paper about using non-linear models for Oaxaca and variance estimation for two_fold models.
 
 ## Authors
 
