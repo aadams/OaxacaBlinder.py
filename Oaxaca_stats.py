@@ -43,7 +43,7 @@ Estimates," The Journal of Human Resources, 1973.
 import statsmodels.api as sm
 import numpy as np
 class Oaxaca:
-__doc__ = r"""
+    __doc__ = r"""
     Prepares to perform Oaxaca-Blinder Decomposition.
 
     %(params)s
@@ -53,14 +53,24 @@ __doc__ = r"""
     exo: array-like
         'exo' is the exogenous variable(s) or the independent variable(s) 
         that you are using to explain the endogenous variable.
-    bifurcate: int
+    bifurcate: int or string
         'bifurcate' is the column of the exogenous variable(s) that you 
         wish to split on. This would generally be the group that you wish
-        to explain the two means for.
-    hasconst: None or bool
+        to explain the two means for. Int of the column for a NumPy array 
+        or int/string for the name of the column in Pandas
+    hasconst: bool, optional
         Indicates whether the two exogenous variables include a user-supplied
         constant. If True, a constant is assumed. If False, a constant is added
         at the start. If nothing is supplied, then True is assumed.
+    swap: bool, optional
+        Imitates the STATA Oaxaca command by allowing users to choose to swap groups.
+        Unlike STATA, this is assumed to be True instead of False
+    cov_type: string, optional
+        See regression.linear_model.RegressionResults for a description of the 
+        available covariance estimators
+    cov_kwdslist or None, optional
+        See linear_model.RegressionResults.get_robustcov_results for a description 
+        required keywords for alternative covariance estimators
 
     Attributes
     ----------
@@ -78,6 +88,10 @@ __doc__ = r"""
     -----
     Please check if your data includes at constant. This will still run, but
     will return extremely incorrect values if set incorrectly.
+
+    You can access the models by using their code _t_model for the total model,
+    _f_model for the first model, _s_model for the second model.
+
 
     Examples
     --------
@@ -104,11 +118,12 @@ __doc__ = r"""
         Gap: 158.75044
         ******************************
     """
-import statsmodels.api as sm
-import numpy as np
-class Oaxaca:
-    def __init__(self, endo, exo, bifurcate, hasconst = True):
+    def __init__(self, endo, exo, bifurcate, hasconst = True, swap = True, cov_type = 'nonrobust', cov_kwds=None):
             #This does most of the big calculations
+            if str(type(exo)).find('pandas') != -1:
+                bifurcate = exo.columns.get_loc(bifurcate)
+                endo, exo = np.array(endo), np.array(exo)
+
             bi_col = exo[:, bifurcate]
             endo = np.append(bi_col.reshape(-1,1), endo.reshape(-1,1), axis = 1)
             bi = np.unique(bi_col)
@@ -125,7 +140,7 @@ class Oaxaca:
             
             self.gap = endo_f.mean() - endo_s.mean() 
             
-            if self.gap < 0:
+            if swap:
                 endo_f, endo_s = endo_s, endo_f
                 exo_f, exo_s = exo_s, exo_f
                 self.gap = endo_f.mean() - endo_s.mean()
@@ -135,9 +150,9 @@ class Oaxaca:
                 exo_s = sm.add_constant(exo_s, prepend = False)
                 exo = sm.add_constant(exo, prepend = False)
             
-            self._t_model = sm.OLS(endo, exo).fit()
-            self._f_model = sm.OLS(endo_f, exo_f).fit()
-            self._s_model = sm.OLS(endo_s, exo_s).fit()
+            self._t_model = sm.OLS(endo, exo).fit(cov_type = cov_type, cov_kwds = cov_kwds)
+            self._f_model = sm.OLS(endo_f, exo_f).fit(cov_type = cov_type, cov_kwds = cov_kwds)
+            self._s_model = sm.OLS(endo_s, exo_s).fit(cov_type = cov_type, cov_kwds = cov_kwds)
             
             self.exo_f_mean = np.mean(exo_f, axis = 0)
             self.exo_s_mean = np.mean(exo_s, axis = 0)
