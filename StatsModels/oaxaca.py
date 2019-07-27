@@ -47,11 +47,11 @@ class Oaxaca:
     Prepares to perform Oaxaca-Blinder Decomposition.
 
     %(params)s
-    endo: array-like
-        'endo' is the endogenous variable or the dependent variable 
+    endog: array-like
+        'endog' is the endogenous variable or the dependent variable 
         that you are trying to explain.  
-    exo: array-like
-        'exo' is the exogenous variable(s) or the independent variable(s) 
+    exog: array-like
+        'exog' is the exogenous variable(s) or the independent variable(s) 
         that you are using to explain the endogenous variable.
     bifurcate: int or string
         'bifurcate' is the column of the exogenous variable(s) that you 
@@ -89,9 +89,9 @@ class Oaxaca:
     Please check if your data includes at constant. This will still run, but
     will return extremely incorrect values if set incorrectly.
 
-    You can access the models by using their code _t_model for the total model,
-    _f_model for the first model, _s_model for the second model.
-
+    You can access the models by using their code and the . syntax.
+    _t_model for the total model, _f_model for the first model, 
+    _s_model for the second model.
 
     Examples
     --------
@@ -118,44 +118,44 @@ class Oaxaca:
         Gap: 158.75044
         ******************************
     """
-    def __init__(self, endo, exo, bifurcate, hasconst = True, swap = True, cov_type = 'nonrobust', cov_kwds=None):
+    def __init__(self, endog, exog, bifurcate, hasconst = True, swap = True, cov_type = 'nonrobust', cov_kwds=None):
             #This does most of the big calculations
-            if str(type(exo)).find('pandas') != -1:
-                bifurcate = exo.columns.get_loc(bifurcate)
-                endo, exo = np.array(endo), np.array(exo)
+            if str(type(exog)).find('pandas') != -1:
+                bifurcate = exog.columns.get_loc(bifurcate)
+                endog, exog = np.array(endog), np.array(exog)
 
-            bi_col = exo[:, bifurcate]
-            endo = np.append(bi_col.reshape(-1,1), endo.reshape(-1,1), axis = 1)
+            bi_col = exog[:, bifurcate]
+            endog = np.column_stack((bi_col, endog))
             bi = np.unique(bi_col)
             
-            exo_f = exo[np.where(exo[:, bifurcate] == bi[0])]
-            exo_s = exo[np.where(exo[:, bifurcate] == bi[1])]
-            endo_f = endo[np.where(endo[:, 0] == bi[0])]
-            endo_s = endo[np.where(endo[:, 0] == bi[1])]
-            exo_f = np.delete(exo_f, bifurcate, axis = 1)
-            exo_s = np.delete(exo_s, bifurcate, axis = 1)
-            endo_f = endo_f[:,1]
-            endo_s = endo_s[:,1]
-            endo = endo[:,1]
+            exog_f = exog[np.where(exog[:, bifurcate] == bi[0])]
+            exog_s = exog[np.where(exog[:, bifurcate] == bi[1])]
+            endog_f = endog[np.where(endog[:, 0] == bi[0])]
+            endog_s = endog[np.where(endog[:, 0] == bi[1])]
+            exog_f = np.delete(exog_f, bifurcate, axis = 1)
+            exog_s = np.delete(exog_s, bifurcate, axis = 1)
+            endog_f = endog_f[:,1]
+            endog_s = endog_s[:,1]
+            endog = endog[:,1]
             
-            self.gap = endo_f.mean() - endo_s.mean() 
+            self.gap = endog_f.mean() - endog_s.mean() 
             
-            if swap:
-                endo_f, endo_s = endo_s, endo_f
-                exo_f, exo_s = exo_s, exo_f
-                self.gap = endo_f.mean() - endo_s.mean()
+            if swap and self.gap < 0:
+                endog_f, endog_s = endog_s, endog_f
+                exog_f, exog_s = exog_s, exog_f
+                self.gap = endog_f.mean() - endog_s.mean()
             
             if hasconst == False:
-                exo_f = sm.add_constant(exo_f, prepend = False)
-                exo_s = sm.add_constant(exo_s, prepend = False)
-                exo = sm.add_constant(exo, prepend = False)
+                exog_f = sm.add_constant(exog_f, prepend = False)
+                exog_s = sm.add_constant(exog_s, prepend = False)
+                exog = sm.add_constant(exog, prepend = False)
             
-            self._t_model = sm.OLS(endo, exo).fit(cov_type = cov_type, cov_kwds = cov_kwds)
-            self._f_model = sm.OLS(endo_f, exo_f).fit(cov_type = cov_type, cov_kwds = cov_kwds)
-            self._s_model = sm.OLS(endo_s, exo_s).fit(cov_type = cov_type, cov_kwds = cov_kwds)
+            self._t_model = sm.OLS(endog, exog).fit(cov_type = cov_type, cov_kwds = cov_kwds)
+            self._f_model = sm.OLS(endog_f, exog_f).fit(cov_type = cov_type, cov_kwds = cov_kwds)
+            self._s_model = sm.OLS(endog_s, exog_s).fit(cov_type = cov_type, cov_kwds = cov_kwds)
             
-            self.exo_f_mean = np.mean(exo_f, axis = 0)
-            self.exo_s_mean = np.mean(exo_s, axis = 0)
+            self.exog_f_mean = np.mean(exog_f, axis = 0)
+            self.exog_s_mean = np.mean(exog_s, axis = 0)
             self.t_params = np.delete(self._t_model.params, bifurcate)
         
     def three_fold(self):
@@ -183,11 +183,11 @@ class Oaxaca:
             existing at the same time between the two groups.
         """
         #Characteristic Effect
-        self.char_eff = (self.exo_f_mean - self.exo_s_mean) @ self._s_model.params
+        self.char_eff = (self.exog_f_mean - self.exog_s_mean) @ self._s_model.params
         #Coefficient Effect
-        self.coef_eff = (self.exo_s_mean) @ (self._f_model.params - self._s_model.params)
+        self.coef_eff = (self.exog_s_mean) @ (self._f_model.params - self._s_model.params)
         #Interaction Effect
-        self.int_eff = (self.exo_f_mean - self.exo_s_mean) @ (self._f_model.params - self._s_model.params)
+        self.int_eff = (self.exog_f_mean - self.exog_s_mean) @ (self._f_model.params - self._s_model.params)
         
         print("".join(["*" for x in range(0,30)]))
         print("Characteristic Effect: {:.5f}\nCoefficent Effect: {:.5f}\nInteraction Effect: {:.5f}\nGap: {:.5f}".format(self.char_eff, self.coef_eff, self.int_eff, self.gap))
@@ -215,9 +215,9 @@ class Oaxaca:
             This is the effect that can be explained using the data.
         """
         #Unexplained Effect
-        self.unexplained = (self.exo_f_mean @ (self._f_model.params - self.t_params)) + (self.exo_s_mean @ (self.t_params - self._s_model.params))
+        self.unexplained = (self.exog_f_mean @ (self._f_model.params - self.t_params)) + (self.exog_s_mean @ (self.t_params - self._s_model.params))
         #Explained Effect
-        self.explained = (self.exo_f_mean - self.exo_s_mean) @ self.t_params
+        self.explained = (self.exog_f_mean - self.exog_s_mean) @ self.t_params
         
         print("".join(["*" for x in range(0,30)]))
         print("Unexplained Effect: {:.5f}\nExplained Effect: {:.5f}\nGap: {:.5f}".format(self.unexplained, self.explained, self.gap))        
