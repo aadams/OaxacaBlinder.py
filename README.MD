@@ -2,6 +2,8 @@
 
 Now added to **statsmodels**.
 
+With the addition to StatsModels, I would highly recommend using that instead.
+
 This package attempts to port the functionality of the oaxaca command in STATA to Python. The Oaxaca-Blinder, or Blinder-Oaxaca as some call it,
 decomposition attempts to explain gaps in means of groups. It uses the linear models of two given regression equations to show what is explained by regression coefficients and known data and
 what is unexplained using the data. There are two types of Oaxaca-Blinder decompositions, the two-fold and the three-fold,
